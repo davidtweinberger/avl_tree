@@ -11,7 +11,8 @@ Description:
 This is an implementation of a balanced binary search tree with 
 the following external methods:
 	1. insert(data) 				inserts data into the tree, if it is not already
-	2. contains(data) 				returns True if the data is in the tree
+	2. insertList(list) 			inserts elements from list into the tree
+	3. contains(data) 				returns True if the data is in the tree
 	4. __str__() <---> print 		pretty-prints the tree (for testing)
 
 The rest are internal routines used to maintain the requirements
@@ -138,10 +139,13 @@ class AVL_tree:
 		"""
 		Builds the tree by inserting elements from a list in order.
 		"""
-		if type(l) != list:
+		if (l == None):
 			return
-		for ele in l:
-			self.insert(ele)
+		try:
+			for ele in l:
+				self.insert(ele)
+		except TypeError:
+			return
 		return
 
 	def insert(self, data):
