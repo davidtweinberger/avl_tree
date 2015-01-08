@@ -7,6 +7,9 @@ Brown University '16
 01/07/2015
 """
 
+#TODO - implement delete()
+#TODO bugs when it needs to rotate right?
+
 class AVL_tree:
 
 	def __init__(self):
@@ -21,7 +24,8 @@ class AVL_tree:
 		Uses a BFS traversal.
 		"""
 		self.synchronizeFields()
-		print "depth is: " + str(self._depth)
+		if (self._depth == 0):
+			return ""
 		s = ""
 		queue = []
 		level = 0
