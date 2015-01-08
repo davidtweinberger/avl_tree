@@ -6,8 +6,9 @@ Description:
 This is an implementation of a balanced binary search tree with 
 the following external methods:
  1. __insert__(data) inserts data into the tree, if it is not already contained in the tree
- 2. __contains__(data) returns True if the data is in the tree, False otherwise
- 3. __str__() pretty-prints the tree (for testing purposes) using a BFS traversal
+ 2. __insertList__(list) inserts data elements from list into the tree by iterating and calling __insert__
+ 3. __contains__(data) returns True if the data is in the tree, False otherwise
+ 4. __str__() pretty-prints the tree (for testing purposes) using a BFS traversal
 
 The rest are internal routines used to maintain the requirements
 of an AVL tree.
