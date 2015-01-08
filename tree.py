@@ -5,12 +5,37 @@ AVL Tree - a self balancing BST
 David Weinberger (davidtweinberger@gmail.com)
 Brown University '16
 01/07/2015
+
+Description:
+
+This is an implementation of a balanced binary search tree with 
+the following external methods:
+	1. insert(data) 				inserts data into the tree, if it is not already
+	2. contains(data) 				returns True if the data is in the tree
+	3. remove(data) 				removes data if it is in the tree
+	4. __str__() <---> print 		pretty-prints the tree (for testing)
+
+The rest are internal routines used to maintain the requirements
+of an AVL tree.
 """
-
-#TODO - implement delete()
-#TODO bugs when it needs to rotate right?
-
 class AVL_tree:
+	#Inner node class
+	class AVL_node:
+		"""
+		Node class to be used in the tree.
+		Each node has a balance factor attribute representing 
+		the longest downward path rooted at the node.
+		"""
+		def __init__(self, data=None, left=None, right=None, balance=0, parent=None):
+			self.data = data
+			self.left = left
+			self.right = right
+			self.parent = parent
+
+			#used to balance the tree: balance = height(left subtree) - height(right subtree)
+			#tree at node is balanced if the value is in [-1, 0, 1], else it is unbalanced
+			self.balance = balance 
+			return
 
 	def __init__(self):
 		self._root = None
@@ -21,7 +46,7 @@ class AVL_tree:
 	def __str__(self):
 		"""
 		Traverses and prints the binary tree in an organized and pretty way.
-		Uses a BFS traversal.
+		Uses a BFS (level-order) traversal.
 		"""
 		self.synchronizeFields()
 		if (self._depth == 0):
@@ -119,11 +144,12 @@ class AVL_tree:
 		if (data == None):
 			return 
 		if (not self.getRoot()):
-			self.setRoot(AVL_node(data=data))
+			self.setRoot(AVL_tree.AVL_node(data=data))
 			return
 		else:
 			self._done = 0
 			self.recursiveInsert(self.getRoot(), data)
+			delattr(self, "_done")
 			return
 
 	def recursiveInsert(self, node, data):
@@ -140,13 +166,13 @@ class AVL_tree:
 			if node.left:
 				self.recursiveInsert(node.left, data)
 			else:
-				node.left = AVL_node(data=data, parent=node)
+				node.left = AVL_tree.AVL_node(data=data, parent=node)
 				self.updateBalance(node.left)
 		else:
 			if node.right:
 				self.recursiveInsert(node.right, data)
 			else:
-				node.right = AVL_node(data=data, parent=node)
+				node.right = AVL_tree.AVL_node(data=data, parent=node)
 				self.updateBalance(node.right)
 		return
 
@@ -159,10 +185,11 @@ class AVL_tree:
 			return
 		if node.parent:
 			if node.parent.left is node: #lchild
-				node.parent.balance = node.parent.balance + 1
-			else:
-				node.parent.balance = node.parent.balance - 1
+				node.parent.balance += 1
+			elif node.parent.right is node: #rchild
+				node.parent.balance -= 1
 
+			#recurses to the parent
 			if node.parent.balance != 0:
 				self.updateBalance(node.parent)
 
@@ -170,6 +197,7 @@ class AVL_tree:
 		"""
 		Performs a left rotation.
 		"""
+		print "rotating left around: " + str(node.data)
 		newRootNode = node.right
 		node.right = newRootNode.left
 		if (newRootNode.left):
@@ -191,6 +219,7 @@ class AVL_tree:
 		"""
 		Performs a right rotation.
 		"""
+		print "rotating right around: " + str(node.data)
 		newRootNode = node.left
 		node.left = newRootNode.right
 		if (newRootNode.right):
@@ -205,8 +234,8 @@ class AVL_tree:
 				node.parent.left = newRootNode
 		newRootNode.right = node
 		node.parent = newRootNode
-		node.balance = node.balance + 1 - min(newRootNode.balance, 0)
-		newRootNode.balance = newRootNode.balance + 1 + max(node.balance, 0)
+		node.balance = node.balance - 1 - max(newRootNode.balance, 0)
+		newRootNode.balance = newRootNode.balance - 1 + min(node.balance, 0)
 
 	def rebalance(self, node):
 		"""
@@ -219,28 +248,11 @@ class AVL_tree:
 			else:
 				self.rotateLeft(node)
 		elif node.balance > 0:
-			if node.left.balance > 0:
+			if node.left.balance < 0:
 				self.rotateLeft(node.left)
 				self.rotateRight(node)
 			else:
 				self.rotateRight(node)
-
-class AVL_node:
-	"""
-	Node class to be used in the tree.
-	Each node has a balance factor attribute representing 
-	the longest downward path rooted at the node.
-	"""
-	def __init__(self, data=None, left=None, right=None, balance=0, parent=None):
-		self.data = data
-		self.left = left
-		self.right = right
-		self.parent = parent
-
-		#used to balance the tree: balance = height(left subtree) - height(right subtree)
-		#tree at node is balanced if the value is in [-1, 0, 1], else it is unbalanced
-		self.balance = balance 
-		return
 
 def main():
 	pass
